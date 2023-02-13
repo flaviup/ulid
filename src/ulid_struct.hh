@@ -252,7 +252,7 @@ struct ULID {
 };
 
 /**
- * EncodeTime will encode the time point to the passed ulid
+ * EncodeTime will encode the time point to the passed ULID
  * */
 inline void EncodeTime(std::chrono::time_point<std::chrono::system_clock> time_point, ULID& ulid) {
 	auto time_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(time_point);
@@ -282,7 +282,7 @@ inline void EncodeTimeSystemClockNow(ULID& ulid) {
 }
 
 /**
- * EncodeEntropy will encode the last 10 bytes of the passed ulid with
+ * EncodeEntropy will encode the last 10 bytes of the passed ULID with
  * the values generated using the passed random number generator.
  * */
 inline void EncodeEntropy(const std::function<uint8_t()>& rng, ULID& ulid) {
@@ -299,7 +299,24 @@ inline void EncodeEntropy(const std::function<uint8_t()>& rng, ULID& ulid) {
 }
 
 /**
- * EncodeEntropyRand will encode a ulid using std::rand
+ * EncodeEntropy will set the last 10 bytes of the passed ULID to
+ * the bytes array passed.
+ * */
+inline void EncodeEntropyBytes(const uint8_t entropy[10], ULID& ulid) {
+	ulid.data[6] = entropy[0];
+	ulid.data[7] = entropy[1];
+	ulid.data[8] = entropy[2];
+	ulid.data[9] = entropy[3];
+	ulid.data[10] = entropy[4];
+	ulid.data[11] = entropy[5];
+	ulid.data[12] = entropy[6];
+	ulid.data[13] = entropy[7];
+	ulid.data[14] = entropy[8];
+	ulid.data[15] = entropy[9];
+}
+
+/**
+ * EncodeEntropyRand will encode a ULID using std::rand
  *
  * std::rand returns values in [0, RAND_MAX]
  * */
@@ -319,7 +336,7 @@ inline void EncodeEntropyRand(ULID& ulid) {
 static std::uniform_int_distribution<rand_t> Distribution_0_255(0, 255);
 
 /**
- * EncodeEntropyMt19937 will encode a ulid using std::mt19937
+ * EncodeEntropyMt19937 will encode a ULID using std::mt19937
  *
  * It also creates a std::uniform_int_distribution to generate values in [0, 255]
  * */
@@ -345,11 +362,27 @@ inline void Encode(std::chrono::time_point<std::chrono::system_clock> timestamp,
 }
 
 /**
+ * Encode2 will create an encoded ULID with a timestamp and entropy bytes.
+ * */
+inline void Encode2(std::chrono::time_point<std::chrono::system_clock> timestamp, const uint8_t entropy[10], ULID& ulid) {
+	EncodeTime(timestamp, ulid);
+	EncodeEntropyBytes(entropy, ulid);
+}
+
+/**
  * EncodeNowRand = EncodeTimeNow + EncodeEntropyRand.
  * */
 inline void EncodeNowRand(ULID& ulid) {
 	EncodeTimeNow(ulid);
 	EncodeEntropyRand(ulid);
+}
+
+/**
+ * EncodeSystemClockNowEntropy = EncodeTimeSystemClockNow + EncodeEntropyBytes.
+ * */
+inline void EncodeSystemClockNowEntropy(const uint8_t entropy[10], ULID& ulid) {
+	EncodeTimeSystemClockNow(ulid);
+	EncodeEntropyBytes(entropy, ulid);
 }
 
 /**
@@ -362,11 +395,30 @@ inline ULID Create(std::chrono::time_point<std::chrono::system_clock> timestamp,
 }
 
 /**
+ * Create2 will create a ULID with a timestamp and entropy bytes.
+ * */
+inline ULID Create2(std::chrono::time_point<std::chrono::system_clock> timestamp, uint8_t entropy[10]) {
+	ULID ulid = 0;
+	Encode2(timestamp, entropy, ulid);
+	return ulid;
+}
+
+/**
  * CreateNowRand:EncodeNowRand = Create:Encode.
  * */
 inline ULID CreateNowRand() {
 	ULID ulid;
 	EncodeNowRand(ulid);
+	return ulid;
+}
+
+/**
+ * CreateSystemClockNowEntropy = EncodeTimeSystemClockNow + EncodeEntropyBytes.
+ * */
+inline ULID CreateSystemClockNowEntropy(const uint8_t entropy[10]) {
+	ULID ulid = 0;
+	EncodeTimeSystemClockNow(ulid);
+	EncodeEntropyBytes(entropy, ulid);
 	return ulid;
 }
 
