@@ -12,4 +12,8 @@
 #include "ulid_struct.hh"
 #endif // ULIDUINT128
 
+#define ULID_SIZE 16
+#define ULID_TIMESTAMP_SIZE 6
+#define ULID_ENTROPY_SIZE 10
+
 #endif // ULID_HH
