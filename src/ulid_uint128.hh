@@ -438,7 +438,7 @@ inline void UnmarshalFrom(const char str[26], ULID& ulid) {
  * Unmarshal will create a new ULID by unmarshaling the passed string.
  * */
 inline ULID Unmarshal(const std::string& str) {
-	ULID ulid;
+	ULID ulid = 0;
 	UnmarshalFrom(str.c_str(), ulid);
 	return ulid;
 }
@@ -501,7 +501,7 @@ inline void UnmarshalBinaryFrom(const uint8_t b[16], ULID& ulid) {
  * Unmarshal will create a new ULID by unmarshaling the passed byte vector.
  * */
 inline ULID UnmarshalBinary(const std::vector<uint8_t>& b) {
-	ULID ulid;
+	ULID ulid = 0;
 	UnmarshalBinaryFrom(b.data(), ulid);
 	return ulid;
 }

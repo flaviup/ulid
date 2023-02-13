@@ -282,7 +282,7 @@ inline void EncodeTimeSystemClockNow(ULID& ulid) {
 }
 
 /**
- * EncodeEntropy will encode the last 10 bytes of the passed uint8_t array with
+ * EncodeEntropy will encode the last 10 bytes of the passed ulid with
  * the values generated using the passed random number generator.
  * */
 inline void EncodeEntropy(const std::function<uint8_t()>& rng, ULID& ulid) {
