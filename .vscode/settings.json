@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.rmd": "markdown",
+        "ios": "cpp",
+        "iosfwd": "cpp",
+        "*.ipp": "cpp",
+        "thread": "cpp",
+        "vector": "cpp",
+        "chrono": "cpp",
+        "__config": "cpp",
+        "__tuple": "cpp",
+        "array": "cpp"
+    }
+}
